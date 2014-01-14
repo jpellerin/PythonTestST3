@@ -1,38 +1,44 @@
 import os
 import re
-import sublime, sublime_plugin
+import sublime
+import sublime_plugin
 
 
+SYNTAX = 'Packages/PythonTest/PythonTestOutput.tmLanguage'
+SCHEME = 'Packages/PythonTest/PythonTestOutput.hidden-tmTheme'
 TEST_FUNC_RE = re.compile(r'(\s*)def\s+(test_\w+)\s?\(')
 TEST_CASE_RE = re.compile(r'(\s*)class\s+(\w+)')
-
-
-class ExampleCommand(sublime_plugin.TextCommand):
-    def run(self, edit):
-        self.view.insert(edit, 0, "Hello, World!")
+TB_FILE = r'[ ]*File \"(...*?)\", line ([0-9]*)'
 
 
 class RunPythonTestCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        command, wdir = self.get_test_command()
-        #self.view.insert(edit, 0, command)
-        print(command)
-        print(wdir)
-        # turn on language/theme for output panel somehow
-        self.view.window().run_command("exec", {"cmd": [command],
-                                                "shell": True,
-                                                "working_dir": wdir})
-        # find files in output and make them open file links
-        # somehow...
-
-    def get_test_command(self):
         settings = self.view.window().active_view().settings().get(
-            "python_test") or {}
-        command = [settings.get('command', 'nose2')]
+            "python_test", {})
+        command, wdir = self.get_test_command(settings)
+        # turn on language/theme for output panel somehow
+        panel = self.view.window().create_output_panel('exec')
+        panel.settings().set('color_scheme',
+                             settings.get('color_scheme', SCHEME))
+        self.view.window().run_command(
+            "exec", {"cmd": [command],
+                     "file_regex": TB_FILE,
+                     "shell": True,
+                     "quiet": settings.get('quiet', True),
+                     "syntax": settings.get('syntax_file', SYNTAX),
+                     "working_dir": wdir})
+
+    def get_test_command(self, settings):
+        command = [self.executable(settings)]
+        for opt in self.get_test_options(settings):
+            command.append(opt)
         wdir = settings.get('working_dir', self.view.window().folders()[0])
         for testname in self.get_test_selections(wdir):
             command.append(testname)
         return ' '.join(command), wdir
+
+    def get_test_options(self, settings):
+        return settings.get('options', [])
 
     def get_test_selections(self, wdir):
         mod = self.file_to_module(wdir, self.view.file_name())
@@ -72,3 +78,23 @@ class RunPythonTestCommand(sublime_plugin.TextCommand):
         rel_path = os.path.relpath(fn, wd)
         base, _ = os.path.splitext(rel_path)
         return base.replace(os.path.sep, '.')
+
+    def executable(self, settings):
+        # account for virtualenv (check python interp path in settings)
+        # if set and command is not a full path, make it abs path rel
+        # to dir containing python interp -- have a setting to turn
+        # this behavior off
+        base = settings.get('command', 'nose2')
+        interp = self.view.window().active_view().settings().get(
+            "python_interpreter", None)
+        if not interp:
+            return base
+        if os.path.isabs(base):
+            return base
+        root = os.path.dirname(interp)
+        return os.path.join(root, base)
+
+
+class RunPythonProjectTests(RunPythonTestCommand):
+    def get_test_selections(self, settings):
+        return []
