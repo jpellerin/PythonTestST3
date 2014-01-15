@@ -4,7 +4,7 @@ import sublime
 import sublime_plugin
 
 
-SYNTAX = {'unittest': 'Packages/PythonTest/PythonTestOutput.tmLanguage'}
+SYNTAX = {'unittest': 'Packages/PythonTest/PythonTestOutput.hidden-tmLanguage'}
 SCHEME = {'light': 'Packages/PythonTest/PythonTestOutput.hidden-tmTheme',
           'dark': 'Packages/PythonTest/PythonTestOutputDark.hidden-tmTheme'}
 TEST_FUNC_RE = re.compile(r'(\s*)def\s+(test_\w+)\s?\(')
