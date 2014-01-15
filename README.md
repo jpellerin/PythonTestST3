@@ -34,9 +34,15 @@ In the global section of a project file, PythonTest respects the `python_interpr
 You can customize the plugin's behavior by adding a `python_test` section to a project file. In that section, the following settings may be specified:
 
 *`command`: "nose2" (default) or the name of or path to a test comman. The test command is executed in a shell, so it may include arguments, for instance `python ./manage.py test` is a valid `command` setting.
-*`ignore_interpreter`: False (default). Set to True to ignore the `python_interpreter` setting.
+
+*`ignore_interpreter`: False (default). Set to True to ignore the `python_interpreter`
+ setting.
+
 *`working_dir`: project root (default) or the path to the directory where test commands should be executed
+
 *`quiet`: True (default) to hide test command details in output
+
 *`color_scheme`: "light" (default) or "dark" or a `.tmTheme` or `.hidden-tmTheme` filename
+
 *`syntax`: "unittest" (default) or Specify a `.tmLanguage` file to set the syntax highlighting language for test output
 
