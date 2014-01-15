@@ -4,8 +4,9 @@ import sublime
 import sublime_plugin
 
 
-SYNTAX = 'Packages/PythonTest/PythonTestOutput.tmLanguage'
-SCHEME = 'Packages/PythonTest/PythonTestOutput.hidden-tmTheme'
+SYNTAX = {'unittest': 'Packages/PythonTest/PythonTestOutput.tmLanguage'}
+SCHEME = {'light': 'Packages/PythonTest/PythonTestOutput.hidden-tmTheme',
+          'dark': 'Packages/PythonTest/PythonTestOutputDark.hidden-tmTheme'}
 TEST_FUNC_RE = re.compile(r'(\s*)def\s+(test_\w+)\s?\(')
 TEST_CASE_RE = re.compile(r'(\s*)class\s+(\w+)')
 TB_FILE = r'[ ]*File \"(...*?)\", line ([0-9]*)'
@@ -18,14 +19,13 @@ class RunPythonTestCommand(sublime_plugin.TextCommand):
         command, wdir = self.get_test_command(settings)
         # turn on language/theme for output panel somehow
         panel = self.view.window().create_output_panel('exec')
-        panel.settings().set('color_scheme',
-                             settings.get('color_scheme', SCHEME))
+        panel.settings().set('color_scheme', self.color_scheme(settings))
         self.view.window().run_command(
             "exec", {"cmd": [command],
                      "file_regex": TB_FILE,
                      "shell": True,
                      "quiet": settings.get('quiet', True),
-                     "syntax": settings.get('syntax_file', SYNTAX),
+                     "syntax": self.syntax(settings),
                      "working_dir": wdir})
 
     def get_test_command(self, settings):
@@ -85,6 +85,9 @@ class RunPythonTestCommand(sublime_plugin.TextCommand):
         # to dir containing python interp -- have a setting to turn
         # this behavior off
         base = settings.get('command', 'nose2')
+        ignore_interp = settings.get('ignore_interpreter', False)
+        if ignore_interp:
+            return base
         interp = self.view.window().active_view().settings().get(
             "python_interpreter", None)
         if not interp:
@@ -93,6 +96,14 @@ class RunPythonTestCommand(sublime_plugin.TextCommand):
             return base
         root = os.path.dirname(interp)
         return os.path.join(root, base)
+
+    def color_scheme(self, settings):
+        name = settings.get('color_scheme', "light")
+        return SCHEME.get(name, name)
+
+    def syntax(self, settings):
+        name = settings.get('syntax', "unittest")
+        return SYNTAX.get(name, name)
 
 
 class RunPythonProjectTests(RunPythonTestCommand):
