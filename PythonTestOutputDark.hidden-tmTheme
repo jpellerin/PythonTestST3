@@ -60,6 +60,18 @@
       <key>name</key>
       <string>Test</string>
       <key>scope</key>
+      <string>test.skip</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#A684FF</string>
+      </dict>
+    </dict>
+
+    <dict>
+      <key>name</key>
+      <string>Test</string>
+      <key>scope</key>
       <string>test.filename</string>
       <key>settings</key>
       <dict>

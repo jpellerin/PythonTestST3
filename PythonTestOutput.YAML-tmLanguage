@@ -1,0 +1,54 @@
+# [PackageDev] target_format: plist, ext: hidden-tmLanguage
+name: PythonTestOutput
+scopeName: tests.python
+uuid: 461be01e-d282-4798-b5e1-c718d682ab5e
+
+patterns:
+- comment: error details
+  begin: '^[=-]+$'
+  end: "\\[Finished in [\\d+\\.]+s\\]"
+  name: raw
+
+  patterns:
+  - comment: test error
+    name: test.error
+    begin: '^\=+$'
+    end: '^\-+$'
+    match: '^ERROR: (.*)'
+
+  - comment: test fail
+    name: test.fail
+    begin: '^\=+$'
+    end: '^\-+$'
+    match: '^FAIL: (.*)'
+
+  - comment: file in traceback
+    begin: 'File '
+    end: ','
+    match: '"(...*?)"'
+    captures:
+      '1': {name: test.filename}
+
+  - comment: all test pass
+    name: test.pass
+    begin: Ran \d+ tests
+    match: OK
+
+  - comment: tests broken
+    name: test.fail
+    begin: Ran \d+ tests
+    match: FAILED (.*)
+
+
+- comment: test dot error
+  match: E
+  name: test.error
+
+- comment: test dot fail
+  match: F
+  name: test.fail
+
+- comment: test dot skip
+  match: s
+  name: test.skip
+
