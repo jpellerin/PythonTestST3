@@ -39,16 +39,23 @@ patterns:
     begin: Ran \d+ tests
     match: FAILED (.*)
 
+- comment: dots line
+  begin: ^(?:(E)|(F)|(s)|\.)
+  end: \n
+  beginCaptures:
+    '1': {'name': test.error}
+    '2': {'name': test.fail}
+    '3': {'name': test.skip}
+  patterns:
+    - comment: test dot error
+      match: E
+      name: test.error
 
-- comment: test dot error
-  match: E
-  name: test.error
+    - comment: test dot fail
+      match: F
+      name: test.fail
 
-- comment: test dot fail
-  match: F
-  name: test.fail
-
-- comment: test dot skip
-  match: s
-  name: test.skip
+    - comment: test dot skip
+      match: s
+      name: test.skip
 

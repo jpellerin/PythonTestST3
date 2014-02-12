@@ -82,28 +82,57 @@
 			</array>
 		</dict>
 		<dict>
+			<key>begin</key>
+			<string>^(?:(E)|(F)|(s)|\.)</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>test.error</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>test.fail</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>name</key>
+					<string>test.skip</string>
+				</dict>
+			</dict>
 			<key>comment</key>
-			<string>test dot error</string>
-			<key>match</key>
-			<string>E</string>
-			<key>name</key>
-			<string>test.error</string>
-		</dict>
-		<dict>
-			<key>comment</key>
-			<string>test dot fail</string>
-			<key>match</key>
-			<string>F</string>
-			<key>name</key>
-			<string>test.fail</string>
-		</dict>
-		<dict>
-			<key>comment</key>
-			<string>test dot skip</string>
-			<key>match</key>
-			<string>s</string>
-			<key>name</key>
-			<string>test.skip</string>
+			<string>dots line</string>
+			<key>end</key>
+			<string>\n</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>comment</key>
+					<string>test dot error</string>
+					<key>match</key>
+					<string>E</string>
+					<key>name</key>
+					<string>test.error</string>
+				</dict>
+				<dict>
+					<key>comment</key>
+					<string>test dot fail</string>
+					<key>match</key>
+					<string>F</string>
+					<key>name</key>
+					<string>test.fail</string>
+				</dict>
+				<dict>
+					<key>comment</key>
+					<string>test dot skip</string>
+					<key>match</key>
+					<string>s</string>
+					<key>name</key>
+					<string>test.skip</string>
+				</dict>
+			</array>
 		</dict>
 	</array>
 	<key>scopeName</key>
